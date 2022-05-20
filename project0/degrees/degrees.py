@@ -119,13 +119,14 @@ def shortest_path(source, target):
             if costar[1] == target:
 
                 # reverse engineer match list
-                child = Node(state = costar[1], parent = node, action = costar[0])
-                frontier.add(child)
+                node = Node(state = costar[1], parent = node, action = costar[0])
                 path = []
 
                 while node.parent is not None:
+                    print((node.action, people[node.state]['name']))
                     path += [(node.action, node.state)]
                     node = node.parent
+                path.reverse()
                 return path
 
         # update explored states
