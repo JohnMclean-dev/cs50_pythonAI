@@ -15,6 +15,9 @@ class StackFrontier():
     def contains_state(self, state):
         return any(node.state == state for node in self.frontier)
 
+    def contains_action(self, action):
+        return any(node.action == action for node in self.frontier)
+
     def empty(self):
         return len(self.frontier) == 0
 
