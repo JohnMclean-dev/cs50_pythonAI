@@ -90,9 +90,60 @@ def shortest_path(source, target):
     that connect the source to the target.
     If no possible path, returns None.
     """
-    print(neighbors_for_person(source))
-    ## raise NotImplementedError
-    return [('104257', '102'), ('104257', '129')]
+
+    # Initialize frontier
+    sourceMovie = list(people[source]['movies'])[0]
+    start = Node(state = source, parent = None, action = sourceMovie)
+    frontier = QueueFrontier()
+    frontier.add(start)
+
+    # tracking searches
+    exploredStars = set()    # list unique actors explored
+    exploredMovies = set()   # list unique movies explored
+    count = 0
+
+    # Search for target
+    while True:
+
+        # ensure frontier is not empty
+        if frontier.empty():
+            raise Exception("no solution")
+
+        # prepare frontier and update node for current search
+        node = frontier.remove()
+        costars = neighbors_for_person(node.state)
+
+        # return solution if node contains target
+        # checking for solution
+        for costar in costars:
+            if costar[1] == target:
+
+                # reverse engineer match list
+                child = Node(state = costar[1], parent = node, action = costar[0])
+                frontier.add(child)
+                path = []
+
+                while node.parent is not None:
+                    path += [(node.action, node.state)]
+                    node = node.parent
+                return path
+
+        # update explored states
+        exploredStars.add(node.state)
+        exploredMovies.add(node.action)
+
+        # add children to frontier
+        for costar in costars:
+            # check cases
+            exploredStarsCase = not costar[1] in exploredStars
+            exploredMoviesCase = not costar[0] in exploredMovies
+            frontierStatesCase = not frontier.contains_state(costar[1])
+            frontierActionsCase = not frontier.contains_action(costar[0])
+            if exploredStarsCase and exploredMoviesCase and frontierStatesCase and frontierActionsCase:
+                child = Node(state = costar[1], parent = node, action = costar[0])
+                frontier.add(child)
+
+    return None
 
 
 def person_id_for_name(name):
