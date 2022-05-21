@@ -71,7 +71,7 @@ def terminal(board):
     # put all possible checks in a list
     checks = [col1, col2, col3, row1, row2, row3, diag1, diag2]
 
-    # loop through checks in search of possible goal state
+    # check for winner
     for check in checks:
         # isolate spaces on board
         space1 = check[0]
@@ -79,11 +79,16 @@ def terminal(board):
         space3 = check[2]
 
         # update winner, end loop if found
-        winner = (space1 == space2 == space3) and (space1 != EMPTY and space2 != EMPTY and space3 != EMPTY)
-        if winner:
+        terminate = (space1 == space2 == space3) and (space1 != EMPTY and space2 != EMPTY and space3 != EMPTY)
+        if terminate:
             break
 
-    return winner
+    # check for draw
+    if not terminate:
+        checks = col1+col2+col3+row1+row2+row3+diag1+diag2
+        terminate = not any (EMPTY == space for space in checks)
+
+    return terminate
 
 
 def utility(board):
