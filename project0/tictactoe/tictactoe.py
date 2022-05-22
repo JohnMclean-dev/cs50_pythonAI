@@ -81,14 +81,7 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    raise NotImplementedError
 
-
-def terminal(board):
-    """
-    Returns True if game is over, False otherwise.
-    """
-    
     # isolate columns
     col1 = [board[0][0],board[1][0],board[2][0]]
     col2 = [board[0][1],board[1][1],board[2][1]]
@@ -114,14 +107,32 @@ def terminal(board):
         space3 = check[2]
 
         # update winner, end loop if found
-        terminate = (space1 == space2 == space3) and (space1 != EMPTY and space2 != EMPTY and space3 != EMPTY)
-        if terminate:
-            break
+        winner = (space1 == space2 == space3) and (space1 != EMPTY and space2 != EMPTY and space3 != EMPTY)
+        if winner:
+            return space1 
+    
+    # if no winner is found
+    return None
 
-    # check for draw
-    if not terminate:
-        checks = col1+col2+col3+row1+row2+row3+diag1+diag2
-        terminate = not any (EMPTY == space for space in checks)
+
+def terminal(board):
+    """
+    Returns True if game is over, False otherwise.
+    """
+
+    # determine if draw
+    checks = []
+    for row in board:
+        for space in row:
+            checks.append(space)
+
+    draw = not any (EMPTY == space for space in checks)
+    
+    # determine if winner
+    won = winner(board) in [X, O]
+    
+    # if winner or draw terminate
+    terminate = draw or won
 
     return terminate
 
@@ -130,7 +141,17 @@ def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
+    # set value based on winner results
+    value = {
+        None: 0,
+        X: 1,
+        O: -1
+    }
+
+    # determine winner, if there is one
+    won = winner(board)
+
+    return value[won]
 
 
 def minimax(board):
