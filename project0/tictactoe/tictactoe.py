@@ -150,7 +150,6 @@ def utility(board):
 
     # determine winner, if there is one
     won = winner(board)
-
     return value[won]
 
 
