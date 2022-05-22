@@ -55,10 +55,6 @@ def result(board, action):
     Returns the board that results from making move (i, j) on the board.
     """
 
-    # set current board and new board as the input board
-    curBoard = board
-    newBoard = board
-
     # determine move
     row = action[0]
     col = action[1]
