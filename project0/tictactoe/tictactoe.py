@@ -6,6 +6,9 @@ video starts @ 1:11:46
 """
 
 import math
+import re
+
+from test import min_value
 
 X = "X"
 O = "O"
@@ -69,13 +72,16 @@ def result(board, action):
     row = action[0]
     col = action[1]
 
-    # make next move if possible given the action
-    if board[row][col] == EMPTY:
-        board[row][col] = player(board)
-        return board
-    else:
-        raise NameError('Invalid move')
+    newBoard = initial_state()
 
+    # make next move if possible given the action
+    for i, newRow in enumerate(newBoard):
+        for j, newSpace in enumerate(newRow):
+            if i == row and j == col:
+                newBoard[i][j] = player(board)
+            else:
+                newBoard[i][j] = board[i][j]
+    return newBoard
 
 def winner(board):
     """
@@ -141,6 +147,7 @@ def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
+
     # set value based on winner results
     value = {
         None: 0,
@@ -152,9 +159,59 @@ def utility(board):
     won = winner(board)
     return value[won]
 
-
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+
+    # corner is optimal first move given the initial state
+    if board == initial_state():
+        return (0, 0)
+
+    # apply minimax, base starting point on the current player
+    if player(board) == X:
+        value, move = max_value(board)
+        return move
+    else:
+        value, move = min_value(board)
+        return move
+
+
+def max_value(board):
+    """
+    minimax helper function
+    """
+
+    # determine if game is over
+    if terminal(board):
+        return utility(board), None
+
+    # determine maximum score after recursing through all the options
+    v1 = -math.inf
+    m1 = None
+    for action in actions(board):
+        v2, m2 = min_value(result(board, action))
+        if v2 > v1:
+            v1 = v2
+            m1 = action
+    return v1, m1
+
+
+def min_value(board):
+    """
+    minimax helper function
+    """
+
+    # determine if game is over
+    if terminal(board):
+        return utility(board), None
+
+    # determine minimum score after recursing through all the options
+    v1 = math.inf
+    m1 = None
+    for action in actions(board):
+        v2, act = max_value(result(board, action))
+        if v2 < v1:
+            v1 = v2
+            m1 = action
+    return v1, m1
