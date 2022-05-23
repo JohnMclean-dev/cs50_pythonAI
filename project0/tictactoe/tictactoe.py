@@ -6,7 +6,6 @@ video starts @ 1:11:46
 """
 
 import math
-import re
 
 from test import min_value
 
